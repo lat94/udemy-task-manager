@@ -42,9 +42,9 @@ router.get('/users/:id', async (req, res) => {
 
 router.patch('/users/:id', async (req, res) => {
     const userToBeUpdated = req.body;
-    const updated = Object.keys(userToBeUpdated)
+    const updates = Object.keys(userToBeUpdated);
     const allowedUpdates = ['name', 'email', 'password', 'age'];
-    const isValidOperation = updated.every((update) => allowedUpdates.includes(update));
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
     const id = req.params.id;
 
     if (!isValidOperation) {
@@ -52,11 +52,14 @@ router.patch('/users/:id', async (req, res) => {
     }
 
     try {
-        const userUpdated = await User.findByIdAndUpdate(id, userToBeUpdated, { new: true, runValidators: true });
-
-        if (!userUpdated) {
+        const user = await User.findById(id);
+        if (!user) {
             return res.status(404).send();
         }
+
+        updates.forEach(update => user[update] = userToBeUpdated[update]);
+        const userUpdated = await user.save();
+
 
         res.send(userUpdated)
 
