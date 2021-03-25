@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+const jwt = require('jsonwebtoken');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -19,10 +20,10 @@ const userSchema = mongoose.Schema({
         required: true,
         lowercase: true,
         trim: true,
+        unique: true,
         validate(value) {
             if (!validator.isEmail(value)) {
                 throw new Error('Email is invalid');
-
             }
         }
     },
@@ -36,10 +37,45 @@ const userSchema = mongoose.Schema({
                 throw new Error('Password cannot contain "password"');
             }
         }
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]
+
+});
+// use methods for specific instance of user(user)
+userSchema.methods.generateAuthToken = async function (params) {
+    const user = this;
+    const token = jwt.sign({ _id: user._id.toString() }, 'lat94');
+
+    user.tokens = user.tokens.concat({ token });
+    await user.save();
+
+    return token;    
+}
+
+// use statics for the class User
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+        throw new Error('Unable to log in');
     }
 
-})
+    const match = await bcrypt.compare(password, user.password);
 
+    if (!match) {
+        throw new Error('Unable to login');
+    }
+
+    return user;
+};
+
+
+// Hash the plain text password before saving
 userSchema.pre('save', async function (next) {
     const user = this;
 
