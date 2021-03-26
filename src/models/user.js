@@ -47,6 +47,18 @@ const userSchema = mongoose.Schema({
 
 });
 // use methods for specific instance of user(user)
+
+//overriding the method that express calls when returning the response(res.send())
+userSchema.methods.toJSON = function (params) {
+    const user = this;
+    const userObject = user.toObject();
+
+    delete userObject.password;
+    delete userObject.tokens;
+
+    return userObject;
+}
+
 userSchema.methods.generateAuthToken = async function (params) {
     const user = this;
     const token = jwt.sign({ _id: user._id.toString() }, 'lat94');
@@ -54,8 +66,8 @@ userSchema.methods.generateAuthToken = async function (params) {
     user.tokens = user.tokens.concat({ token });
     await user.save();
 
-    return token;    
-}
+    return token;
+};
 
 // use statics for the class User
 userSchema.statics.findByCredentials = async (email, password) => {

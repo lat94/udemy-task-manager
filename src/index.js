@@ -11,10 +11,3 @@ app.use(routes);
 app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);
 });
-
-const jwt = require('jsonwebtoken');
-
-const myFunction = async () => {
-}
-
-myFunction();
