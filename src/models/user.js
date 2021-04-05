@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const Task = require('./task');
 
 const userSchema = mongoose.Schema({
     name: {
@@ -46,6 +47,17 @@ const userSchema = mongoose.Schema({
     }]
 
 });
+
+// virtual propertyies: relationship by 2 entities
+userSchema.virtual('tasks',  {
+    ref: 'Task',
+    // the field that will store user's id to compare with foreignField
+    localField: '_id',
+
+    // the field that the mongoose will look in to it, to have the user's id
+    foreignField: 'owner'
+});
+
 // use methods for specific instance of user(user)
 
 //overriding the method that express calls when returning the response(res.send())
@@ -97,6 +109,16 @@ userSchema.pre('save', async function (next) {
 
     next();
 })
+
+// delete user tasks when user is removed
+userSchema.pre('remove', async function (next) {
+   const user = this;
+   
+   await Task.deleteMany({ owner: user._id });
+
+
+   next();
+});
 
 const User = mongoose.model('User', userSchema);
 
