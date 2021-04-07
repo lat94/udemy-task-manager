@@ -2,6 +2,20 @@ require('../db/mongoose');
 const { Router } = require("express");
 const User = require('../models/user');
 const auth = require('../middleware/auth');
+const multer = require('multer');
+
+const upload = multer({
+    dest: 'avatars',
+    limits: {
+        fieldSize: 1000000
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jp[e]?g|png)$/)) {
+            return cb(new Error('Please, upload an image!'));           
+        }
+        cb(undefined, true);
+    }
+});
 
 const router = new Router;
 
@@ -93,6 +107,10 @@ router.delete('/users/me', auth, async (req, res) => {
     } catch (error) {
         res.send(500).send();
     }
+});
+
+router.post('/users/me/avatar', upload.single('avatar'), (req, res) => {
+    res.send();
 });
 
 module.exports = router;
