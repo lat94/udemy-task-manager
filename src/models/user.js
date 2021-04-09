@@ -44,14 +44,16 @@ const userSchema = mongoose.Schema({
             type: String,
             required: true
         }
-    }]
-
+    }],
+    avatar: {
+        type: Buffer
+    }
 }, {
     timestamps: true
 });
 
 // virtual propertyies: relationship by 2 entities
-userSchema.virtual('tasks',  {
+userSchema.virtual('tasks', {
     ref: 'Task',
     // the field that will store user's id to compare with foreignField
     localField: '_id',
@@ -69,6 +71,7 @@ userSchema.methods.toJSON = function (params) {
 
     delete userObject.password;
     delete userObject.tokens;
+    delete userObject.avatar;
 
     return userObject;
 }
@@ -114,12 +117,12 @@ userSchema.pre('save', async function (next) {
 
 // delete user tasks when user is removed
 userSchema.pre('remove', async function (next) {
-   const user = this;
-   
-   await Task.deleteMany({ owner: user._id });
+    const user = this;
+
+    await Task.deleteMany({ owner: user._id });
 
 
-   next();
+    next();
 });
 
 const User = mongoose.model('User', userSchema);
