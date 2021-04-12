@@ -5,7 +5,8 @@
     "license": "MIT",
     "scripts": {
         "start": "node src/index.js",
-        "dev": "nodemon src/index.js"
+        "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=./config/dev.env",
+        "prd": "node src/index.js"
     },
     "dependencies": {
         "@sendgrid/mail": "^7.4.2",

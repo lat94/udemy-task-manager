@@ -1,21 +1,26 @@
-const dotenv = require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 
 const { SEND_GRID_API_KEY } = process.env;
-
-console.log('------SEND_GRID_API_KEY------');
-console.log(SEND_GRID_API_KEY);
-console.log('------------');
+const verifiedEmail = 'lucas.tx94@hotmail.com';
 
 sgMail.setApiKey(SEND_GRID_API_KEY);
 
-const msg = {
-    to: 'amanda_ata15@hotmail.com', // Change to your recipient
-    from: 'lucas.tx94@hotmail.com', // Change to your verified sender
-    subject: 'Sending with SendGrid is Fun',
-    text: 'testando u3hu3hu3hu',
-}
+const sendWelcomeEmail = (email, name) => {
+    sgMail.send({
+        to: email,
+        from: verifiedEmail,
+        subject: 'Thanks for joining us!',
+        text: `Welcome to the app, ${name}. Let me know how you get along with the app`
+    });
+};
 
-sgMail.send(msg)
-    .then(value => console.log(value))
-    .catch(error => console.error(error));
+const sendCancelationEmail = (email, name) => {
+    sgMail.send({
+        to: email,
+        from: verifiedEmail,
+        subject: 'Sorry to see you go!',
+        text: `We are sad to see you going, ${name}. Are there something that we could do to improve?`
+    });
+};
+
+module.exports = { sendWelcomeEmail, sendCancelationEmail };

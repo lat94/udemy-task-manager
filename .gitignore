@@ -1,6 +1,7 @@
 # Env ignore
 images/
 avatars/
+config
 
 # Logs
 logs
