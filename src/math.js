@@ -15,7 +15,7 @@ const add = (a, b) => {
                 return reject('Numbers must be non-negative');
             }
             resolve(a + b);
-        }, 2000);
+        }, 800);
     });
 };
 
