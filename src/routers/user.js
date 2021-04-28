@@ -29,8 +29,7 @@ router.post('/users', async (req, res) => {
         const token = await user.generateAuthToken();
         res.status(201).send({ user, token });
     } catch (error) {
-        console.error(error);
-        res.status(400).send(error);
+         res.status(400).send(error);
     }
 });
 
@@ -42,8 +41,7 @@ router.post('/users/login', async (req, res) => {
         res.send({ user, token });
 
     } catch (error) {
-        console.error(error);
-        res.sendStatus(400);
+         res.sendStatus(400);
     }
 });
 
@@ -56,8 +54,7 @@ router.post('/users/logout', auth, async (req, res) => {
         res.send();
 
     } catch (error) {
-        console.error(error);
-        res.sendStatus(500);
+         res.sendStatus(500);
     }
 });
 
@@ -68,8 +65,7 @@ router.post('/users/logoutAll', auth, async (req, res) => {
         await user.save();
         res.send();
     } catch (error) {
-        console.error(error);
-        res.sendStatus(500);        
+         res.sendStatus(500);        
     }
 
 })
@@ -140,7 +136,6 @@ router.get('/users/:id/avatar', async (req, res) => {
 
 
    } catch (error) {
-       console.error(error);
        res.sendStatus(404);
    } 
 });
